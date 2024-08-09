@@ -24,15 +24,11 @@ public class UserController {
     @Autowired
     private AccountService userAccountService;
 
-    @PostMapping("/profile/create/{userId}")
-    public ResponseEntity<UserProfile> createProfile(@PathVariable String userId){
+    @PostMapping("/onboard")
+    public ResponseEntity<UserDisplay> createProfile(@RequestBody UserDisplay user){
         try{
-        UserProfile profile = userService.findProfile(userId);
-        if(profile == null){
-            UserProfile newProfile = userService.initialiseUser(userId);
-            return ResponseEntity.ok(newProfile);
-        }
-        return ResponseEntity.ok(profile);
+        UserDisplay savedUser = userService.onboardUser(user);
+        return ResponseEntity.ok(savedUser);
         }
         catch (Exception e){
             Sentry.captureException(e);
@@ -101,29 +97,29 @@ public class UserController {
         return ResponseEntity.ok(account);
     }
 
-    @PutMapping("/details/update")
+    @PutMapping("/update")
     @ResponseBody
-    public ResponseEntity<User> updateUserDetails(@RequestBody User user){
+    public ResponseEntity<UserDisplay> updateUser(@RequestBody UserDisplay display){
         try{
-            User updatedUser = userService.updateUser(user);
+            UserDisplay updatedUser = userService.updateUser(display);
             return ResponseEntity.ok(updatedUser);
-        } catch (Exception e){
+        }
+        catch (Exception e){
             Sentry.captureException(e);
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @PutMapping("/account/update")
-    @ResponseBody
-    public ResponseEntity<UserAccount> updateUserAccount(@RequestBody UserAccount account) {
-        try {
-            UserAccount updatedAccount = userService.updateUserAccount(account);
-            return ResponseEntity.ok(updatedAccount);
-        } catch (Exception e){
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(@RequestBody UserAccount account){
+        try{
+            userService.deleteUserAccount(account);
+            return ResponseEntity.ok("User deleted");
+        }
+        catch (Exception e){
             Sentry.captureException(e);
             return ResponseEntity.badRequest().build();
         }
-
     }
 
     @GetMapping("/error")
