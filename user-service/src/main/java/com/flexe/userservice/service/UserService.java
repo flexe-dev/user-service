@@ -5,6 +5,7 @@ import com.flexe.userservice.entity.user.UserDisplay;
 import com.flexe.userservice.entity.user.UserProfile;
 import com.flexe.userservice.repository.UserProfileRepository;
 import com.flexe.userservice.repository.UserRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private UserProfileRepository userProfileRepository;
+    @Autowired
+    private UserInteractionService userInteractionService;
 
     //User Queries
 
@@ -44,29 +47,29 @@ public class UserService {
     }
 
     //User Creation
-
-    public UserProfile initialiseUser(String userId){
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isEmpty()) return null;
-        UserProfile profile = new UserProfile(user.get().getId());
-        //Send Kafka Message to generate User Node
-        return userProfileRepository.save(profile);
-
+    public UserDisplay onboardUser(UserDisplay user){
+        if(user.getProfile().getId().isEmpty() || user.getProfile().getUserId() == null){
+            user.getProfile().setId(new ObjectId().toHexString());
+        }
+        return updateUser(user);
     }
 
     //User Modification
-
-    public User updateUser(User user){
-        return userRepository.save(user);
+    public UserDisplay updateUser(UserDisplay user){
+        userRepository.save(user.getUser());
+        userProfileRepository.save(user.getProfile());
+        userInteractionService.SaveUserNode(user);
+        return user;
     }
 
-    public UserProfile updateProfile(UserProfile userProfile){
-        return userProfileRepository.save(userProfile);
-    }
+    //User Deletion
+    public UserAccount deleteUserAccount(UserAccount account){
+        userRepository.delete(account.getUser());
+        userProfileRepository.delete(account.getProfile());
+        //Send Request To Post Service
 
-    public UserAccount updateUserAccount(UserAccount account){
-        userRepository.save(account.getUser());
-        userProfileRepository.save(account.getProfile());
+        //Send Message To Interaction Service
+        userInteractionService.DeleteUserNode(new UserDisplay(account));
         return account;
     }
 }

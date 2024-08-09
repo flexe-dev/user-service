@@ -13,6 +13,11 @@ public class UserDisplay {
         this.profile = profile;
     }
 
+    public UserDisplay(UserAccount account){
+        this.user = account.getUser();
+        this.profile = account.getProfile();
+    }
+
     public User getUser() {
         return user;
     }
