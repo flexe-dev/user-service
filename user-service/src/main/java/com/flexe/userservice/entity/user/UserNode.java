@@ -4,6 +4,7 @@ public class UserNode {
     private String userId;
     private String name;
     private String username;
+    private String image;
     private String job;
 
     public UserNode(){
