@@ -1,10 +1,8 @@
 package com.flexe.userservice.controller;
 
-import com.flexe.userservice.entity.user.User;
-import com.flexe.userservice.entity.user.UserAccount;
-import com.flexe.userservice.entity.user.UserDisplay;
-import com.flexe.userservice.entity.user.UserProfile;
-import com.flexe.userservice.service.AccountService;
+import com.flexe.userservice.entity.response.ErrorResponse;
+import com.flexe.userservice.entity.user.*;
+import com.flexe.userservice.exceptions.UserNotFoundException;
 import com.flexe.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,14 +13,11 @@ import io.sentry.Sentry;
 
 @RestController
 @RequestMapping("api/user")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:8080")
 public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private AccountService userAccountService;
 
     @PostMapping("/onboard")
     public ResponseEntity<UserDisplay> createProfile(@RequestBody UserDisplay user){
@@ -36,12 +31,48 @@ public class UserController {
         }
     }
 
+    @PostMapping("/follow/{userId}/{targetId}")
+    public ResponseEntity<String> followUser(@PathVariable String userId, @PathVariable String targetId){
+        try{
+            userService.FollowUser(userId, targetId);
+            return ResponseEntity.ok("User followed");
+        }
+        catch (Exception e){
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/unfollow/{userId}/{targetId}")
+    public ResponseEntity<String> unfollowUser(@PathVariable String userId, @PathVariable String targetId){
+        try{
+            userService.UnfollowUser(userId, targetId);
+            return ResponseEntity.ok("User unfollowed");
+        }
+        catch (Exception e){
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/block/{userId}/{targetId}")
+    public ResponseEntity<String> blockUser(@PathVariable String userId, @PathVariable String targetId){
+        try{
+//            userService.blockUser(userId, targetId);
+            return ResponseEntity.ok("User blocked");
+        }
+        catch (Exception e){
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/find/id/{id}")
     public ResponseEntity<User> findUserById(@PathVariable String id){
 
             User user = userService.findUserById(id);
             if(user == null){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+                throw new UserNotFoundException("User not found");
             }
             return ResponseEntity.ok(user);
     }
@@ -51,7 +82,7 @@ public class UserController {
     public ResponseEntity<User> findUserByUsername(@PathVariable String username){
         User user = userService.findUserByUsername(username);
         if(user == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            throw new UserNotFoundException("User not found");
         }
         return ResponseEntity.ok(user);
     }
@@ -60,41 +91,27 @@ public class UserController {
     public ResponseEntity<User> findUserByEmail(@PathVariable String email){
             User user = userService.findUserByEmail(email);
             if(user == null){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+                throw new UserNotFoundException("User not found");
             }
             return ResponseEntity.ok(user);
-    }
-
-    @GetMapping("/profile/find/{userId}")
-    public UserProfile findProfileFromUser(@PathVariable String userId){
-        return userService.findProfile(userId);
-    }
-
-    @GetMapping("/account/find/{userId}")
-    public ResponseEntity<UserAccount> findUserAccount(@PathVariable String userId){
-        UserAccount account = userAccountService.findUserAccount(userId);
-        if(account == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/display/find/{userId}")
     public ResponseEntity<UserDisplay> findUserDisplayByUserId(@PathVariable String userId){
         UserDisplay display = userService.findUserDisplay(userId);
         if(display == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            throw new UserNotFoundException("User not found");
         }
         return ResponseEntity.ok(display);
     }
 
-    @GetMapping("/account/find/username/{username}")
-    public ResponseEntity<UserAccount> findUserAccountByUsername(@PathVariable String username){
-        UserAccount account = userAccountService.findUserAccountByUsername(username);
-        if(account == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    @GetMapping("/display/find/username/{username}")
+    public ResponseEntity<UserDisplay> findUserDisplayByUsername(@PathVariable String username){
+        UserDisplay display = userService.findUserDisplayByUsername(username);
+        if(display == null){
+            throw new UserNotFoundException("User not found");
         }
-        return ResponseEntity.ok(account);
+        return ResponseEntity.ok(display);
     }
 
     @PutMapping("/update")
@@ -110,10 +127,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(@RequestBody UserAccount account){
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userId){
         try{
-            userService.deleteUserAccount(account);
+            userService.deleteUserAccount(userId);
             return ResponseEntity.ok("User deleted");
         }
         catch (Exception e){
@@ -131,5 +148,11 @@ public class UserController {
             Sentry.captureException(e);
         }
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck(){
+        return ResponseEntity.ok("User service is running");
+    }
 }
+
 

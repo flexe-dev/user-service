@@ -1,9 +1,13 @@
 package com.flexe.userservice.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.UUID;
+
 
 @Document(collection = "User")
 public class User{
@@ -16,8 +20,20 @@ public class User{
     private String image;
     private Boolean onboarded;
 
+    @Value("${DEFAULT_USER_IMAGE_URL}")
+    private String DEFAULT_IMAGE_URL;
+
     public User() {
     }
+
+    public User(String email){
+        this.email = email;
+        this.onboarded = false;
+        this.name = "";
+        this.username = UUID.randomUUID().toString();
+        this.image = DEFAULT_IMAGE_URL;
+    }
+
 
     public User(String id, String email, Date emailVerified, String username, String name, String image, Boolean onboarded) {
         this.id = id;
@@ -84,4 +100,5 @@ public class User{
     public void setOnboarded(Boolean onboarded) {
         this.onboarded = onboarded;
     }
+
 }

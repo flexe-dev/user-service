@@ -16,6 +16,7 @@ public class UserNode {
         this.name = user.getUser().getName();
         this.username = user.getUser().getUsername();
         this.job = user.getProfile().getJob();
+        this.image = user.getUser().getImage();
     }
 
     public String getName() {
@@ -50,4 +51,11 @@ public class UserNode {
         this.job = job;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }

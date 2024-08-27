@@ -11,6 +11,7 @@ public class UserInteractionEnums {
         FOLLOW,
         UNFOLLOW,
         VIEW,
+        BLOCK
     }
 }
 

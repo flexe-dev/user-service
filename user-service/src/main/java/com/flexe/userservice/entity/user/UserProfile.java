@@ -42,6 +42,22 @@ public class UserProfile{
         this.pronouns = pronouns;
     }
 
+    public void AddFollower(){
+        this.followers++;
+    }
+
+    public void RemoveFollower(){
+        this.followers--;
+    }
+
+    public void AddFollowing(){
+        this.following++;
+    }
+
+    public void RemoveFollowing(){
+        this.following--;
+    }
+
     public String getId() {
         return id;
     }

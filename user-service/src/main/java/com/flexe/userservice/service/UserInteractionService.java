@@ -3,6 +3,7 @@ package com.flexe.userservice.service;
 import com.flexe.userservice.entity.posts.UserPosts;
 import com.flexe.userservice.entity.user.User;
 import com.flexe.userservice.entity.user.UserDisplay;
+import com.flexe.userservice.entity.user.UserInteraction;
 import com.flexe.userservice.entity.user.UserNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,6 +19,9 @@ public class UserInteractionService {
     @Autowired
     KafkaTemplate<String, UserPosts> postKafkaTemplate;
 
+    @Autowired
+    KafkaTemplate<String, UserInteraction> userInteractionKafkaTemplate;
+
     public void SaveUserNode(UserDisplay user){
         SendUserNodeMessage(user, UserNodeModificationEnum.SAVE);
     }
@@ -26,12 +30,25 @@ public class UserInteractionService {
         SendUserNodeMessage(user, UserNodeModificationEnum.DELETE);
     }
 
+    public void FollowUser(String userId, String targetId){
+        UserInteraction interaction = new UserInteraction(userId, targetId);
+        SendUserInteractionMessage(interaction, UserInteractionEnum.FOLLOW);
+    }
+    public void UnfollowUser(String userId, String targetId){
+        UserInteraction interaction = new UserInteraction(userId, targetId);
+        SendUserInteractionMessage(interaction, UserInteractionEnum.UNFOLLOW);
+    }
+
     public void DeleteUserPosts(UserPosts posts){
         postKafkaTemplate.send("user-post-delete", posts);
     }
 
     public void SendUserNodeMessage(UserDisplay user, UserNodeModificationEnum action){
         userKafkaTemplate.send("user-node-action", action.toString(), new UserNode(user));
+    }
+
+    public void SendUserInteractionMessage(UserInteraction interaction, UserInteractionEnum action){
+        userInteractionKafkaTemplate.send("user-interaction", action.toString(), interaction);
     }
 
 
