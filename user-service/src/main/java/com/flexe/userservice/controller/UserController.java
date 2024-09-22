@@ -19,6 +19,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/create")
+    public ResponseEntity<User> createUser(@RequestBody User user){
+        try{
+            User savedUser = userService.saveUser(user);
+            return ResponseEntity.ok(savedUser);
+        }
+        catch (Exception e){
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PostMapping("/onboard")
     public ResponseEntity<UserDisplay> createProfile(@RequestBody UserDisplay user){
         try{
