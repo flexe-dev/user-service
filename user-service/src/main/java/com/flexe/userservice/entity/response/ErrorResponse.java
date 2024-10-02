@@ -1,7 +1,11 @@
 package com.flexe.userservice.entity.response;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+@Getter
+@Setter
 public class ErrorResponse {
     private final HttpStatus statusCode;
     private final String message;
@@ -10,12 +14,5 @@ public class ErrorResponse {
         this.statusCode = statusCode;
         this.message = message;
     }
-    // Getter methods
-    public HttpStatus getStatusCode() {
-        return statusCode;
-    }
 
-    public String getMessage() {
-        return message;
-    }
 }

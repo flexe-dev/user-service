@@ -39,10 +39,6 @@ public class UserInteractionService {
         SendUserInteractionMessage(interaction, UserInteractionEnum.UNFOLLOW);
     }
 
-    public void DeleteUserPosts(UserPosts posts){
-        postKafkaTemplate.send("user-post-delete", posts);
-    }
-
     public void SendUserNodeMessage(UserDisplay user, UserNodeModificationEnum action){
         userKafkaTemplate.send("user-node-action", action.toString(), new UserNode(user));
     }

@@ -1,5 +1,10 @@
 package com.flexe.userservice.entity.user;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class UserDisplay {
     private User user;
     private UserProfile profile;
@@ -10,22 +15,6 @@ public class UserDisplay {
 
     public UserDisplay(User user, UserProfile profile){
         this.user = user;
-        this.profile = profile;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public UserProfile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(UserProfile profile) {
         this.profile = profile;
     }
 
