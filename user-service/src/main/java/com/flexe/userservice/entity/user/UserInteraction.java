@@ -1,7 +1,11 @@
 package com.flexe.userservice.entity.user;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.lang.NonNull;
 
+@Getter
+@Setter
 public class UserInteraction {
     @NonNull
     private String userId;
@@ -16,21 +20,4 @@ public class UserInteraction {
         this.targetId = targetId;
     }
 
-    @NonNull
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(@NonNull String userId) {
-        this.userId = userId;
-    }
-
-    @NonNull
-    public String getTargetId() {
-        return targetId;
-    }
-
-    public void setTargetId(@NonNull String targetId) {
-        this.targetId = targetId;
-    }
 }
