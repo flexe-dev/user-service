@@ -6,6 +6,11 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class UserService {
 
@@ -38,6 +43,31 @@ public class UserService {
         UserProfile profile = findProfile(userId);
         if(profile == null) throw new IllegalArgumentException("User Profile Not Found");
         return profile;
+    }
+
+    public List<UserDetails> FindManyUsers(List<String> userIdList){
+        if(userIdList == null || userIdList.isEmpty()) return List.of();
+
+        HashMap<String, UserDisplay> userMap = new HashMap<>();
+        userIdList.forEach(id -> {userMap.put(id, new UserDisplay());
+        });
+
+        // Retrieve All User objects
+        List<User> users = userRepository.findAllInIdList(userIdList.stream().toList());
+
+        // Allocate each user object to its respective Class
+        users.forEach(user -> {
+            userMap.get(user.getId()).setUser(user);
+        });
+
+        // Fill the remaining UserDisplay objects with the respective UserProfile objects
+        List<UserProfile> profiles = userProfileRepository.findAllInUserIdList(userIdList.stream().toList());
+        profiles.forEach(profile -> {
+            userMap.get(profile.getUserId()).setProfile(profile);
+        });
+
+        // Filter out any incomplete UserDisplay objects
+        return List.copyOf(userMap.values()).stream().filter(user -> user.getProfile() != null && user.getUser() != null ).map(UserDisplay::toUserDetails).toList();
     }
 
     public UserDisplay findUserDisplay(String userId) {

@@ -18,6 +18,10 @@ public class UserDisplay {
         this.profile = profile;
     }
 
+    public UserDetails toUserDetails(){
+        return new UserDetails(this);
+    }
+
 }
 
 
