@@ -1,7 +1,5 @@
 package com.flexe.userservice.service;
 
-import com.flexe.userservice.entity.posts.UserPosts;
-import com.flexe.userservice.entity.user.User;
 import com.flexe.userservice.entity.user.UserDisplay;
 import com.flexe.userservice.entity.user.UserInteraction;
 import com.flexe.userservice.entity.user.UserNode;
@@ -15,9 +13,6 @@ public class UserInteractionService {
 
     @Autowired
     KafkaTemplate<String, UserNode> userKafkaTemplate;
-
-    @Autowired
-    KafkaTemplate<String, UserPosts> postKafkaTemplate;
 
     @Autowired
     KafkaTemplate<String, UserInteraction> userInteractionKafkaTemplate;

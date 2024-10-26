@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import io.sentry.Sentry;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequestMapping("api/user")
 @CrossOrigin(origins = "http://localhost:8080")
@@ -87,6 +91,15 @@ public class UserController {
                 throw new UserNotFoundException("User not found");
             }
             return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("find/users")
+    public ResponseEntity<List<UserDetails>> FindManyUsersById(@RequestBody  List<String> userIdList){
+        List<UserDetails> users = userService.FindManyUsers(userIdList);
+        if(users == null){
+            throw new UserNotFoundException("Users not found");
+        }
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/find/username/{username}")
