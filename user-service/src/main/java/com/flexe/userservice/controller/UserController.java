@@ -1,19 +1,13 @@
 package com.flexe.userservice.controller;
 
-import com.flexe.userservice.entity.response.ErrorResponse;
 import com.flexe.userservice.entity.user.*;
 import com.flexe.userservice.exceptions.UserNotFoundException;
 import com.flexe.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import io.sentry.Sentry;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("api/user")
